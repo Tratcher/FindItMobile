@@ -78,7 +78,7 @@ namespace FindIt.Services
 			items = new List<Item>();
 			var _items = new List<Item>
 			{
-				new Item { Id = Guid.NewGuid().ToString(), Text = "Pizza" },
+				new Item { Id = Guid.NewGuid().ToString(), Text = "Pizza", Location = "Poor Anton's laptop" },
 				new Item { Id = Guid.NewGuid().ToString(), Text = "Breads" },
 				new Item { Id = Guid.NewGuid().ToString(), Text = "Eggs" },
 				new Item { Id = Guid.NewGuid().ToString(), Text = "Itch Stick" },

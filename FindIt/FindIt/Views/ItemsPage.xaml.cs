@@ -1,5 +1,5 @@
 ﻿using System;
-using FindIt.Droid;
+using Plugin.Geolocator;
 using FindIt.Models;
 using FindIt.ViewModels;
 
@@ -43,17 +43,21 @@ namespace FindIt.Views
 				viewModel.LoadItemsCommand.Execute(null);
         }
 
-        public void OnStatusChange(object sender, ToggledEventArgs args)
+        async void OnStatusChange(object sender, ToggledEventArgs args)
         {
-            var item = ItemsListView.SelectedItem as Item;
-            if (item == null)
+            var item = sender as Switch;
+            var resolvedItem = item.BindingContext as Item;
+            if (resolvedItem == null)
             {
                 return;
             }
             if (args.Value)
             {
                 // viewModel.Item.Found = true;
-                item.Location = MainActivity.LastKnownLocation?.ToString();
+                // item.Location = MainActivity.LastKnownLocation?.ToString();
+                var locator = new GeolocatorImplementation();
+                resolvedItem.Location = (await locator.GetPositionAsync(timeout: new System.TimeSpan(0, 0, 1))).Longitude.ToString();
+
             }
             else
             {
