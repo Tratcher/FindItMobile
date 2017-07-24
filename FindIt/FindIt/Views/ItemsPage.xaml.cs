@@ -1,5 +1,5 @@
 ﻿using System;
-
+using FindIt.Droid;
 using FindIt.Models;
 using FindIt.ViewModels;
 
@@ -17,7 +17,7 @@ namespace FindIt.Views
 
 			BindingContext = viewModel = new ItemsViewModel();
 		}
-
+        /*
 		async void OnItemSelected(object sender, SelectedItemChangedEventArgs args)
 		{
 			var item = args.SelectedItem as Item;
@@ -29,7 +29,7 @@ namespace FindIt.Views
 			// Manually deselect item
 			ItemsListView.SelectedItem = null;
 		}
-
+        */
 		async void AddItem_Clicked(object sender, EventArgs e)
 		{
 			await Navigation.PushAsync(new NewItemPage());
@@ -41,6 +41,28 @@ namespace FindIt.Views
 
 			if (viewModel.Items.Count == 0)
 				viewModel.LoadItemsCommand.Execute(null);
-		}
-	}
+        }
+
+        public void OnStatusChange(object sender, ToggledEventArgs args)
+        {
+            var item = ItemsListView.SelectedItem as Item;
+            if (item == null)
+            {
+                return;
+            }
+            if (args.Value)
+            {
+                // viewModel.Item.Found = true;
+                item.Location = MainActivity.LastKnownLocation?.ToString();
+            }
+            else
+            {
+                // viewModel.Item.Found = false;
+                item = null;
+            }
+
+            // Manually deselect item
+            ItemsListView.SelectedItem = null;
+        }
+    }
 }

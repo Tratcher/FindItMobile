@@ -1,5 +1,4 @@
 ﻿using System;
-
 using FindIt.Models;
 
 using Xamarin.Forms;
@@ -14,10 +13,9 @@ namespace FindIt.Views
 		{
 			InitializeComponent();
 
-			Item = new Item
-			{
-				Text = "Item name",
-				Description = "This is a nice description"
+            Item = new Item
+            {
+                Text = "Item name",
 			};
 
 			BindingContext = this;
