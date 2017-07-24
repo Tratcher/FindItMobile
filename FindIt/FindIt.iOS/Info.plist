@@ -15,7 +15,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
-	<string>8.0</string>
+	<string>10.3</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>
@@ -42,5 +42,7 @@
 	</array>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/AppIcon.appiconset</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Always use it?</string>
 </dict>
 </plist>
