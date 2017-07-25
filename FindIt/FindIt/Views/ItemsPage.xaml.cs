@@ -97,12 +97,22 @@ namespace FindIt.Views
             if (args.Value)
             {
                 item.Found = true;
-                item.Location = await App.Locator.GetLocationAsync();
+                var loc = await App.Locator.GetLocationAsync();
+                if (loc != null)
+                {
+                    item.Latitude = loc.Latitude;
+                    item.Longitude = loc.Longitude;
+                    item.Altitude = loc.Altitude;
+                    item.Accuracy = loc.Accuracy;
+                }
             }
             else
             {
                 item.Found = false;
-                item.Location = null;
+                item.Latitude = null;
+                item.Longitude = null;
+                item.Altitude = null;
+                item.Accuracy = null;
             }
 
             await manager.SaveTaskAsync(item);

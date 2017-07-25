@@ -24,6 +24,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)IAuthenticate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ILocator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ItemManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Local.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\BaseDataObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>

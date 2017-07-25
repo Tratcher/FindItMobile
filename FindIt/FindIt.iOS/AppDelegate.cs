@@ -22,10 +22,20 @@ namespace FindIt.iOS
 			return base.FinishedLaunching(app, options);
 		}
 
-        public async Task<string> GetLocationAsync()
+        public async Task<Local> GetLocationAsync()
         {
             var loc = await _locator.GetPositionAsync(timeout: new System.TimeSpan(0, 0, 10));
-            return $"Lat: {loc.Latitude}; Long: {loc.Longitude}; Alt: {loc.Altitude}; Accuracy: {loc.Accuracy}";
+            if (loc == null)
+            {
+                return null;
+            }
+            return new Local()
+            {
+                Latitude = loc.Latitude,
+                Longitude = loc.Longitude,
+                Altitude = loc.Altitude,
+                Accuracy = loc.Accuracy
+            };
         }
 
 		public static Func<NSUrl, bool> ResumeWithURL;

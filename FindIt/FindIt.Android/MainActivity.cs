@@ -76,9 +76,20 @@ namespace FindIt.Droid
         {
         }
 
-        public Task<string> GetLocationAsync()
+        public Task<Local> GetLocationAsync()
         {
-            return Task.FromResult(_locMgr.GetLastKnownLocation(LocationManager.GpsProvider)?.ToString());
+            var location = _locMgr.GetLastKnownLocation(LocationManager.GpsProvider);
+            if (location == null)
+            {
+                return Task.FromResult<Local>(null);
+            }
+            return Task.FromResult(new Local()
+            {
+                Latitude = location.Latitude,
+                Longitude = location.Longitude,
+                Altitude = location.Altitude,
+                Accuracy = location.Accuracy
+            });
         }
 
 

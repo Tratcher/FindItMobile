@@ -44,7 +44,7 @@
                        LineBreakMode="NoWrap"
                        Style="{DynamicResource ListItemTextStyle}"
                        FontSize="16"/>
-                <Label Text="{Binding Location}"
+                <Label Text="{Binding Latitude}"
                        LineBreakMode="NoWrap"
                        Style="{DynamicResource ListItemTextStyle}"
                        FontSize="16"/>

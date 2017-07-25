@@ -7,6 +7,6 @@ namespace FindIt
 {
     public interface ILocator
     {
-        Task<string> GetLocationAsync();
+        Task<Local> GetLocationAsync();
     }
 }
