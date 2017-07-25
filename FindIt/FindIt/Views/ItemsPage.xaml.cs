@@ -1,5 +1,4 @@
 ﻿using System;
-using Plugin.Geolocator;
 using FindIt.Models;
 using FindIt.ViewModels;
 
@@ -54,15 +53,13 @@ namespace FindIt.Views
             if (args.Value)
             {
                 // viewModel.Item.Found = true;
-                // item.Location = MainActivity.LastKnownLocation?.ToString();
-                var locator = new GeolocatorImplementation();
-                resolvedItem.Location = (await locator.GetPositionAsync(timeout: new System.TimeSpan(0, 0, 1))).Longitude.ToString();
-
+                resolvedItem.Location = await App.Locator.GetLocationAsync();
             }
             else
             {
                 // viewModel.Item.Found = false;
-                item = null;
+                // item = null;
+                resolvedItem.Location = null;
             }
 
             // Manually deselect item

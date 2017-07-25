@@ -1,4 +1,6 @@
-﻿using Android.App;
+﻿using System;
+using System.Threading.Tasks;
+using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.Locations;
@@ -8,10 +10,10 @@ using Android.Util;
 namespace FindIt.Droid
 {
     [Activity(Label = "FindIt.Android", Theme = "@style/MyTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity, ILocationListener
+    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity, ILocationListener, ILocator
     {
         private LocationManager _locMgr;
-        public static Location LastKnownLocation;
+        public Location LastKnownLocation;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -23,6 +25,8 @@ namespace FindIt.Droid
             base.OnCreate(bundle);
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
+
+            App.Init((ILocator)this);
 
             LoadApplication(new App());
         }
@@ -69,6 +73,11 @@ namespace FindIt.Droid
 
         public void OnStatusChanged(string provider, Availability status, Bundle extras)
         {
+        }
+
+        public Task<string> GetLocationAsync()
+        {
+            return Task.FromResult(_locMgr.GetLastKnownLocation(LocationManager.GpsProvider)?.ToString());
         }
     }
 }

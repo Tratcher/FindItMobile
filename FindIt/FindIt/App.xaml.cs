@@ -7,7 +7,14 @@ using Xamarin.Forms.Xaml;
 namespace FindIt
 {
 	public partial class App : Application
-	{
+    {
+        public static ILocator Locator { get; private set; }
+
+        public static void Init(ILocator locator)
+        {
+            Locator = locator;
+        }
+
         public App()
 		{
 			InitializeComponent();
