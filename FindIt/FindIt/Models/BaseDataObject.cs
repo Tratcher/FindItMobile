@@ -1,5 +1,6 @@
 ﻿using System;
 using FindIt.Helpers;
+using Microsoft.WindowsAzure.MobileServices;
 
 namespace FindIt.Models
 {
@@ -7,7 +8,7 @@ namespace FindIt.Models
     {
         public BaseDataObject()
         {
-            Id = Guid.NewGuid().ToString();
+            // Id = Guid.NewGuid().ToString();
         }
 
         /// <summary>
@@ -28,6 +29,7 @@ namespace FindIt.Models
         /// <summary>
         /// Azure version for online/offline sync
         /// </summary>
-        public string AzureVersion { get; set; }
+        [Version]
+        public string Version { get; set; }
     }
 }

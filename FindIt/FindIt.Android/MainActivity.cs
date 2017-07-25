@@ -6,11 +6,12 @@ using Android.Content.PM;
 using Android.Locations;
 using Android.OS;
 using Android.Util;
+using Microsoft.WindowsAzure.MobileServices;
 
 namespace FindIt.Droid
 {
     [Activity(Label = "FindIt.Android", Theme = "@style/MyTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity, ILocationListener, ILocator
+    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity, ILocationListener, ILocator, IAuthenticate
     {
         private LocationManager _locMgr;
         public Location LastKnownLocation;
@@ -26,7 +27,7 @@ namespace FindIt.Droid
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
 
-            App.Init((ILocator)this);
+            App.Init((ILocator)this, (IAuthenticate)this);
 
             LoadApplication(new App());
         }
@@ -78,6 +79,41 @@ namespace FindIt.Droid
         public Task<string> GetLocationAsync()
         {
             return Task.FromResult(_locMgr.GetLastKnownLocation(LocationManager.GpsProvider)?.ToString());
+        }
+
+
+
+        // Define a authenticated user.
+        private MobileServiceUser user;
+
+        public async Task<bool> Authenticate()
+        {
+            var success = false;
+            var message = string.Empty;
+            try
+            {
+                // Sign in with Facebook login using a server-managed flow.
+                user = await ItemManager.DefaultManager.CurrentClient.LoginAsync(this,
+                    MobileServiceAuthenticationProvider.Google, "findithack");
+                if (user != null)
+                {
+                    message = string.Format("you are now signed-in as {0}.",
+                        user.UserId);
+                    success = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+            }
+
+            // Display the success or failure message.
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.SetMessage(message);
+            builder.SetTitle("Sign-in result");
+            builder.Create().Show();
+
+            return success;
         }
     }
 }

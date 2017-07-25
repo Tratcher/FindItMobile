@@ -4,17 +4,33 @@
              x:Class="FindIt.Views.ItemsPage"
               Title="{Binding Title}"
              x:Name="BrowseItemsPage">
-  <ContentPage.ToolbarItems>
-  	<ToolbarItem Text="Add Item" Clicked="AddItem_Clicked" />
-  </ContentPage.ToolbarItems>
   <ContentPage.Content>
-    <StackLayout>
-      <ListView x:Name="ItemsListView"
-				ItemsSource="{Binding Items}"
+        <StackLayout>
+            <StackLayout Grid.Row="0" BackgroundColor="#5ABAFF" Padding="10,30,10,5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Entry x:Name="newItemName" Placeholder="Item name" />
+                    <StackLayout x:Name="buttonsPanel" Grid.Column="1" Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+                        <Button Text="+" MinimumHeightRequest="30" Clicked="OnAdd" />
+                    </StackLayout>
+                </Grid>
+            </StackLayout>
+            <Button x:Name="loginButton" Text="Sign-in" MinimumHeightRequest="30" Clicked="loginButton_Clicked"/>
+            <ActivityIndicator 
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       IsVisible="False"
+                       IsEnabled="True"
+                       x:Name="syncIndicator"/>
+
+            <ListView x:Name="ItemsListView"
                 VerticalOptions="FillAndExpand"
                 HasUnevenRows="true"
                 RefreshCommand="{Binding LoadItemsCommand}"
-                IsPullToRefreshEnabled="true"
+                IsPullToRefreshEnabled="false"
                 IsRefreshing="{Binding IsBusy, Mode=OneWay}"
                 CachingStrategy="RecycleElement"
 				>

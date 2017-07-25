@@ -10,9 +10,12 @@ namespace FindIt
     {
         public static ILocator Locator { get; private set; }
 
-        public static void Init(ILocator locator)
+        public static IAuthenticate Authenticator { get; private set; }
+        
+        public static void Init(ILocator locator, IAuthenticate authenticator)
         {
             Locator = locator;
+            Authenticator = authenticator;
         }
 
         public App()
