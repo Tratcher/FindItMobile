@@ -11,6 +11,7 @@ namespace FindIt.Views
     {
         // Track whether the user has authenticated.
         bool authenticated = false;
+        bool refreshing = false;
 
         ItemManager manager;
 
@@ -68,7 +69,9 @@ namespace FindIt.Views
         {
             using (var scope = new ActivityIndicatorScope(syncIndicator, showActivityIndicator))
             {
+                refreshing = true;
                 ItemsListView.ItemsSource = await manager.GetItemsAsync(syncItems);
+                refreshing = false;
             }
         }
 
@@ -80,14 +83,21 @@ namespace FindIt.Views
             newItemName.Text = string.Empty;
             newItemName.Unfocus();
         }
+
         async Task AddItem(Item item)
         {
             await manager.SaveTaskAsync(item);
+            refreshing = true;
             ItemsListView.ItemsSource = await manager.GetItemsAsync();
+            refreshing = false;
         }
 
         async void OnStatusChange(object sender, ToggledEventArgs args)
         {
+            if (refreshing)
+            {
+                return;
+            }
             var control = sender as Switch;
             var item = control.BindingContext as Item;
             if (item == null)
