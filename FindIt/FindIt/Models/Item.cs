@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 namespace FindIt.Models
 {
     public class Item : BaseDataObject
@@ -10,12 +10,21 @@ namespace FindIt.Models
             set { SetProperty(ref text, value); }
         }
 
-        string location;
-        public string Location
+        string latitude;
+        public string Latitude
         {
-            get { return location; }
-            set { SetProperty(ref location, value); }
+            get { return latitude; }
+            set { SetProperty(ref latitude, value); }
+
         }
+
+		string longitude;
+		public string Longitude
+		{
+			get { return longitude; }
+			set { SetProperty(ref longitude, value); }
+
+		}
 
         string status;
         public string Status
