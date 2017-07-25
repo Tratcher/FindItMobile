@@ -32,7 +32,6 @@
             <maps:Map 
                 x:Name="map"
                 HeightRequest="200"
-                WidthRequest="320"
                 IsShowingUser="true"
                 HasZoomEnabled="true"
                 InitialCameraUpdate="-23.68, -46.87, 13, 30, 60"
