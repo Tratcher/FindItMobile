@@ -44,10 +44,6 @@
                        LineBreakMode="NoWrap"
                        Style="{DynamicResource ListItemTextStyle}"
                        FontSize="16"/>
-                <Label Text="{Binding Status}"
-                       LineBreakMode="NoWrap"
-                       Style="{DynamicResource ListItemTextStyle}"
-                       FontSize="16"/>
                 <Label Text="{Binding Location}"
                        LineBreakMode="NoWrap"
                        Style="{DynamicResource ListItemTextStyle}"

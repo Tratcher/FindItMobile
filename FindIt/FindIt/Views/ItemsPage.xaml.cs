@@ -84,23 +84,24 @@ namespace FindIt.Views
 
         async void OnStatusChange(object sender, ToggledEventArgs args)
         {
-            var item = sender as Switch;
-            var resolvedItem = item.BindingContext as Item;
-            if (resolvedItem == null)
+            var control = sender as Switch;
+            var item = control.BindingContext as Item;
+            if (item == null)
             {
                 return;
             }
             if (args.Value)
             {
-                // viewModel.Item.Found = true;
-                resolvedItem.Location = await App.Locator.GetLocationAsync();
+                item.Found = true;
+                item.Location = await App.Locator.GetLocationAsync();
             }
             else
             {
-                // viewModel.Item.Found = false;
-                // item = null;
-                resolvedItem.Location = null;
+                item.Found = false;
+                item.Location = null;
             }
+
+            await manager.SaveTaskAsync(item);
 
             // Manually deselect item
             ItemsListView.SelectedItem = null;

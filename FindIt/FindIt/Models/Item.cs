@@ -21,28 +21,12 @@ namespace FindIt.Models
             set { SetProperty(ref location, value); }
         }
 
-        [JsonProperty(PropertyName = "status")]
-        string status;
-        public string Status
+        [JsonProperty(PropertyName = "found")]
+        bool found;
+        public bool Found
         {
-            get { return status; }
-            set { SetProperty(ref status, value); }
-        }
-        
-        internal bool Found
-        {
-            get { return string.Equals("found", Status, System.StringComparison.OrdinalIgnoreCase); }
-            set
-            {
-                if (value)
-                {
-                    Status = "found";
-                }
-                else
-                {
-                    Status = null;
-                }
-            }
+            get { return found; }
+            set { SetProperty(ref found, value); }
         }
     }
 }
