@@ -22,20 +22,20 @@
         <ListView.ItemTemplate>
           <DataTemplate>
             <ViewCell>
-              <StackLayout Padding="10">
+              <StackLayout Padding="10,10,10,50">
                 <Switch IsToggled="{Binding Found}" Toggled="OnStatusChange" />
                 <Label Text="{Binding Text}"
                        LineBreakMode="NoWrap"
                        Style="{DynamicResource ListItemTextStyle}"
-                       FontSize="16"/>
-                <Label Text="{Binding Status}"
+                       FontSize="16" />
+                <Label Text="{Binding Latitude}"
                        LineBreakMode="NoWrap"
                        Style="{DynamicResource ListItemTextStyle}"
-                       FontSize="16"/>
-                <Label Text="{Binding Location}"
+                       FontSize="10"/>
+                <Label Text="{Binding Longitude}"
                        LineBreakMode="NoWrap"
                        Style="{DynamicResource ListItemTextStyle}"
-                       FontSize="16"/>
+                       FontSize="10"/>
               </StackLayout>
             </ViewCell>
           </DataTemplate>

@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using Plugin.Geolocator;
 using FindIt.Models;
 using FindIt.ViewModels;
@@ -56,7 +56,8 @@ namespace FindIt.Views
                 // viewModel.Item.Found = true;
                 // item.Location = MainActivity.LastKnownLocation?.ToString();
                 var locator = new GeolocatorImplementation();
-                resolvedItem.Location = (await locator.GetPositionAsync(timeout: new System.TimeSpan(0, 0, 1))).Longitude.ToString();
+                resolvedItem.Latitude = (await locator.GetPositionAsync(new TimeSpan(0, 0, 1))).Latitude.ToString();
+                resolvedItem.Longitude = (await locator.GetPositionAsync(new TimeSpan(0, 0, 1))).Longitude.ToString();
 
             }
             else
