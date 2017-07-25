@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using FindIt.Models;
 using FindIt.ViewModels;
 
@@ -57,7 +57,11 @@ namespace FindIt.Views
 
             // Set syncItems to true to synchronize the data on startup when offline is enabled.
             if (authenticated == true)
+            {
                 await RefreshItems(true, syncItems: false);
+				// Hide the Sign-in button.
+				this.loginButton.IsVisible = false;
+            }
         }
 
         private async Task RefreshItems(bool showActivityIndicator, bool syncItems)
