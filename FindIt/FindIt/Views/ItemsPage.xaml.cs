@@ -1,9 +1,11 @@
-﻿﻿using System;
+using System;
+using System.Linq;
 using FindIt.Models;
 using FindIt.ViewModels;
 
 using Xamarin.Forms;
 using System.Threading.Tasks;
+using Xamarin.Forms.GoogleMaps;
 
 namespace FindIt.Views
 {
@@ -115,6 +117,18 @@ namespace FindIt.Views
                     item.Altitude = loc.Altitude;
                     item.Accuracy = loc.Accuracy;
                 }
+
+				var geocoder = new Xamarin.Forms.GoogleMaps.Geocoder();
+                var positions = await geocoder.GetPositionsForAddressAsync($"{ item.Latitude }, { item.Longitude }");
+				if (positions.Count() > 0)
+				{
+					var pos = positions.First();
+					map.MoveToRegion(MapSpan.FromCenterAndRadius(pos, Distance.FromMeters(5)));
+				}
+				else
+				{
+					await this.DisplayAlert("Not found", "Geocoder returns no results", "Close");
+				}
             }
             else
             {

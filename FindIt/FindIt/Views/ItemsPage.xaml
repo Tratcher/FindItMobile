@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="FindIt.Views.ItemsPage"
-              Title="{Binding Title}"
-             x:Name="BrowseItemsPage">
-  <ContentPage.Content>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:maps="clr-namespace:Xamarin.Forms.GoogleMaps;assembly=Xamarin.Forms.GoogleMaps"
+    x:Class="FindIt.Views.ItemsPage"
+    Title="{Binding Title}"
+    x:Name="BrowseItemsPage">
+        
+    <ContentPage.Content>
         <StackLayout>
             <StackLayout Grid.Row="0" BackgroundColor="#5ABAFF" Padding="10,30,10,5">
                 <Grid>
@@ -18,6 +21,7 @@
                     </StackLayout>
                 </Grid>
             </StackLayout>
+            
             <Button x:Name="loginButton" Text="Sign-in" MinimumHeightRequest="30" Clicked="loginButton_Clicked"/>
             <ActivityIndicator 
                        HorizontalOptions="Center"
@@ -25,34 +29,47 @@
                        IsVisible="False"
                        IsEnabled="True"
                        x:Name="syncIndicator"/>
-
+            <maps:Map 
+                x:Name="map"
+                HeightRequest="200"
+                WidthRequest="320"
+                IsShowingUser="true"
+                HasZoomEnabled="true"
+                InitialCameraUpdate="-23.68, -46.87, 13, 30, 60"
+                VerticalOptions="FillAndExpand" />
+                
             <ListView x:Name="ItemsListView"
+    		    ItemsSource="{Binding Items}"
                 VerticalOptions="FillAndExpand"
                 HasUnevenRows="true"
                 RefreshCommand="{Binding LoadItemsCommand}"
                 IsPullToRefreshEnabled="false"
                 IsRefreshing="{Binding IsBusy, Mode=OneWay}"
-                CachingStrategy="RecycleElement"
-				>
+                CachingStrategy="RecycleElement">
+                    
                 <!--ItemSelected="OnItemSelected" -->
-        <ListView.ItemTemplate>
-          <DataTemplate>
-            <ViewCell>
-              <StackLayout Padding="10">
-                <Switch IsToggled="{Binding Found}" Toggled="OnStatusChange" />
-                <Label Text="{Binding Text}"
-                       LineBreakMode="NoWrap"
-                       Style="{DynamicResource ListItemTextStyle}"
-                       FontSize="16"/>
-                <Label Text="{Binding Latitude}"
-                       LineBreakMode="NoWrap"
-                       Style="{DynamicResource ListItemTextStyle}"
-                       FontSize="16"/>
-              </StackLayout>
-            </ViewCell>
-          </DataTemplate>
-        </ListView.ItemTemplate>
-      </ListView>
-    </StackLayout> 
-  </ContentPage.Content>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Padding="10, 10, 10, 50">
+                                <Switch IsToggled="{Binding Found}" Toggled="OnStatusChange" />
+                                <Label Text="{Binding Text}"
+                                       LineBreakMode="NoWrap"
+                                       Style="{DynamicResource ListItemTextStyle}"
+                                       FontSize="16"/>
+                                <Label Text="{Binding Status}"
+                                       LineBreakMode="NoWrap"
+                                       Style="{DynamicResource ListItemTextStyle}"
+                                       FontSize="16"/>
+                                <Label Text="{Binding Location}"
+                                       LineBreakMode="NoWrap"
+                                       Style="{DynamicResource ListItemTextStyle}"
+                                       FontSize="16"/>
+                  </StackLayout>
+                </ViewCell>
+              </DataTemplate>
+            </ListView.ItemTemplate>
+          </ListView>
+        </StackLayout> 
+    </ContentPage.Content>
 </ContentPage>

@@ -4,6 +4,8 @@ using Foundation;
 using UIKit;
 using Plugin.Geolocator;
 using Microsoft.WindowsAzure.MobileServices;
+using System.Collections.Generic;
+using FindIt.Models;
 
 namespace FindIt.iOS
 {
@@ -17,7 +19,8 @@ namespace FindIt.iOS
 			global::Xamarin.Forms.Forms.Init();
             // Register interfaces
             App.Init(this, this);
-            LoadApplication(new App());
+            Xamarin.FormsGoogleMaps.Init("AIzaSyDW6WPp5AqLRVGgx7zM5c3THPf_RiRSARM");
+			LoadApplication(new App());
 
 			return base.FinishedLaunching(app, options);
 		}
