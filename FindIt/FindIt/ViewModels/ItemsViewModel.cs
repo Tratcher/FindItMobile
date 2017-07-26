@@ -34,6 +34,12 @@ namespace FindIt.ViewModels
                 Items.Remove(_item);
                 await DataStore.DeleteItemAsync(_item);
             });
+
+            MessagingCenter.Subscribe<ItemsPage, Item>(this, "UpdateItem", async (obj, item) =>
+            {
+                var _item = item as Item;
+                await DataStore.UpdateItemAsync(_item);
+            });                                          
 		}
 
 		async Task ExecuteLoadItemsCommand()

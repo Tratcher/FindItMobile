@@ -52,28 +52,16 @@
                     <DataTemplate>
                         <ViewCell>
                             <ViewCell.ContextActions>
-                                <MenuItem Clicked="OnDelete" CommandParameter="{Binding Item.Id}"
-                                   Text="Delete" IsDestructive="True" />
-                             </ViewCell.ContextActions>
+                                <MenuItem Clicked="OnDelete" CommandParameter="{Binding Item.Id}" Text="Delete" IsDestructive="True" />
+                            </ViewCell.ContextActions>
                             <StackLayout Padding="10">
                                 <Switch IsToggled="{Binding Found}" Toggled="OnStatusChange" />
-                                <Label Text="{Binding Text}"
-                                       LineBreakMode="NoWrap"
-                                       Style="{DynamicResource ListItemTextStyle}"
-                                       FontSize="16"/>
-                                <Label Text="{Binding Status}"
-                                       LineBreakMode="NoWrap"
-                                       Style="{DynamicResource ListItemTextStyle}"
-                                       FontSize="16"/>
-                                <Label Text="{Binding Location}"
-                                       LineBreakMode="NoWrap"
-                                       Style="{DynamicResource ListItemTextStyle}"
-                                       FontSize="16"/>
-                  </StackLayout>
-                </ViewCell>
-              </DataTemplate>
-            </ListView.ItemTemplate>
-          </ListView>
+                                <Entry Text="{Binding Text}" FontSize="16" Unfocused="OnUpdateText"/>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackLayout> 
     </ContentPage.Content>
 </ContentPage>

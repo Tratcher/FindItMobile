@@ -23,28 +23,22 @@ namespace FindIt.Views
             
             manager = ItemManager.DefaultManager;
 		}
-        /*
-		async void OnItemSelected(object sender, SelectedItemChangedEventArgs args)
-		{
-			var item = args.SelectedItem as Item;
-			if (item == null)
-				return;
-
-			await Navigation.PushAsync(new ItemDetailPage(new ItemDetailViewModel(item)));
-
-			// Manually deselect item
-			ItemsListView.SelectedItem = null;
-		}
-        */
 
 		public void OnDelete(object sender, EventArgs e)
 		{
             var item = sender as MenuItem;
 			var deletedItem = item.BindingContext as Item;
 
-			//var mi = ((MenuItem)sender);
             MessagingCenter.Send(this, "DeleteItem", deletedItem);
 		}
+
+		public void OnUpdateText(object sender, EventArgs e)
+		{
+			var item = sender as Entry;
+            var updatedItem = item.BindingContext as Item;
+
+            MessagingCenter.Send(this, "UpdateItem", updatedItem);
+        }
 
 		protected async override void OnAppearing()
 		{
