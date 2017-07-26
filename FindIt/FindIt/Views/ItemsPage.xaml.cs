@@ -9,6 +9,7 @@ namespace FindIt.Views
 {
 	public partial class ItemsPage : ContentPage
     {
+
         // Track whether the user has authenticated.
         bool authenticated = false;
 
@@ -100,6 +101,17 @@ namespace FindIt.Views
 
                 // Hide the Sign-in button.
                 this.loginButton.IsVisible = false;
+            }
+        }
+
+        public async void OnListRefresh(object sender, EventArgs e)
+        {
+            if (authenticated == true)
+            {
+                await RefreshItems(false, syncItems: false);
+
+                var list = sender as ListView;
+                list.EndRefresh();
             }
         }
 

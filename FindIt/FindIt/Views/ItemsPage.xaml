@@ -34,6 +34,7 @@
                 HeightRequest="200"
                 IsShowingUser="true"
                 HasZoomEnabled="true"
+                MapStyle="dark"
                 IsIndoorEnabled="true"
                 VerticalOptions="FillAndExpand" />
 
@@ -42,8 +43,9 @@
                 VerticalOptions="FillAndExpand"
                 HasUnevenRows="true"
                 RefreshCommand="{Binding LoadItemsCommand}"
-                IsPullToRefreshEnabled="false"
+                IsPullToRefreshEnabled="true"
                 IsRefreshing="{Binding IsBusy, Mode=OneWay}"
+                Refreshing="OnListRefresh"
                 CachingStrategy="RecycleElement">
                     
                 <!--ItemSelected="OnItemSelected" -->
