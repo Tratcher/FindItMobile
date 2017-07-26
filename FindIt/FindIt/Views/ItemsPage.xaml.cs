@@ -1,7 +1,6 @@
-using System;
+﻿using System;
 using System.Linq;
 using FindIt.Models;
-using FindIt.ViewModels;
 
 using Xamarin.Forms;
 using System.Threading.Tasks;
@@ -24,20 +23,60 @@ namespace FindIt.Views
             manager = ItemManager.DefaultManager;
 		}
 
-		public void OnDelete(object sender, EventArgs e)
+		public async void OnDone(object sender, EventArgs e)
 		{
             var item = sender as MenuItem;
-			var deletedItem = item.BindingContext as Item;
+            var btn = sender as MenuItem;
 
-            MessagingCenter.Send(this, "DeleteItem", deletedItem);
+			var doneItem = item.BindingContext as Item;
+
+            doneItem.Found = !doneItem.Found;
+
+            if(doneItem.Found)
+            {
+				var loc = await App.Locator.GetLocationAsync();
+				if (loc != null)
+				{
+					doneItem.Latitude = loc.Latitude;
+					doneItem.Longitude = loc.Longitude;
+					doneItem.Altitude = loc.Altitude;
+					doneItem.Accuracy = loc.Accuracy;
+				}
+
+				var geocoder = new Xamarin.Forms.GoogleMaps.Geocoder();
+				var positions = await geocoder.GetPositionsForAddressAsync($"{ doneItem.Latitude }, { doneItem.Longitude }");
+				if (positions.Count() > 0)
+				{
+					var pos = positions.First();
+					map.MoveToRegion(MapSpan.FromCenterAndRadius(pos, Distance.FromMeters(5)));
+				}
+				else
+				{
+					await this.DisplayAlert("Not found", "Geocoder returns no results", "Close");
+				}
+
+                btn.Text = "Undo";
+                var textEl = ItemsListView.FindByName<Entry>(doneItem.Id);
+            }
+            else
+            {
+				doneItem.Latitude = null;
+				doneItem.Longitude = null;
+				doneItem.Altitude = null;
+				doneItem.Accuracy = null;
+
+                btn.Text = "Done";
+            }
+
+            await manager.SaveTaskAsync(doneItem);
 		}
 
-		public void OnUpdateText(object sender, EventArgs e)
+		public async void OnUpdateText(object sender, EventArgs e)
 		{
 			var item = sender as Entry;
             var updatedItem = item.BindingContext as Item;
 
-            MessagingCenter.Send(this, "UpdateItem", updatedItem);
+            await manager.SaveTaskAsync(updatedItem);
         }
 
 		protected async override void OnAppearing()
@@ -83,10 +122,12 @@ namespace FindIt.Views
         public async void OnAdd(object sender, EventArgs e)
         {
             var item = new Item { Text = newItemName.Text };
+            refreshing = true;
             await AddItem(item);
 
             newItemName.Text = string.Empty;
             newItemName.Unfocus();
+            refreshing = false;
         }
 
         async Task AddItem(Item item)
@@ -104,11 +145,13 @@ namespace FindIt.Views
                 return;
             }
             var control = sender as Switch;
+
             var item = control.BindingContext as Item;
             if (item == null)
             {
                 return;
             }
+
             if (args.Value)
             {
                 item.Found = true;

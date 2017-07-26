@@ -52,11 +52,10 @@
                     <DataTemplate>
                         <ViewCell>
                             <ViewCell.ContextActions>
-                                <MenuItem Clicked="OnDelete" CommandParameter="{Binding Item.Id}" Text="Delete" IsDestructive="True" />
+                                <MenuItem Clicked="OnDone" CommandParameter="{Binding Item.Id}" Text="Done" IsDestructive="false" />
                             </ViewCell.ContextActions>
                             <StackLayout Padding="10">
-                                <Switch IsToggled="{Binding Found}" Toggled="OnStatusChange" />
-                                <Entry Text="{Binding Text}" FontSize="16" Unfocused="OnUpdateText"/>
+                                <Entry Text="{Binding Text}" x:Name="{Binding Item.Id}" FontSize="16" Unfocused="OnUpdateText"/>
                             </StackLayout>
                         </ViewCell>
                     </DataTemplate>
