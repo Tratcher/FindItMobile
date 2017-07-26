@@ -101,6 +101,9 @@ namespace FindIt.Views
             // Set syncItems to true to synchronize the data on startup when offline is enabled.
             if (authenticated == true)
             {
+                var loc = await App.Locator.GetLocationAsync();
+                map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(loc.Latitude, loc.Longitude), Distance.FromMeters(1000)));
+
                 await RefreshItems(true, syncItems: false);
 				// Hide the Sign-in button.
 				this.loginButton.IsVisible = false;
@@ -113,11 +116,12 @@ namespace FindIt.Views
             {
                 ItemsListView.ItemsSource = await manager.GetItemsAsync(syncItems);
 
-                var loc = await App.Locator.GetLocationAsync();
                 map.Pins.Clear();
-                map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(loc.Latitude, loc.Longitude), Distance.FromMeters(100)));
 
-                var itemGroups = await manager.GetItemLocations(loc);
+                var target = map.VisibleRegion.Center;
+                var radius = map.VisibleRegion.Radius.Meters;
+                
+                var itemGroups = await manager.GetItemLocations(new Local() { Latitude = target.Latitude, Longitude = target.Longitude }, radius);
 
                 foreach (var group in itemGroups)
                 {

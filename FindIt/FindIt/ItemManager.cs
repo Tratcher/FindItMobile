@@ -106,14 +106,14 @@ namespace FindIt
             return null;
         }
 
-        public async Task<JToken> GetItemLocations(Local loc)
+        public async Task<JToken> GetItemLocations(Local loc, double radius)
         {
             var parameters = new Dictionary<string, string>()
             {
                 { "userID", CurrentClient.CurrentUser.UserId },
                 { "latitude", loc?.Latitude.ToString(CultureInfo.InvariantCulture) },
                 { "longitude", loc?.Longitude.ToString(CultureInfo.InvariantCulture) },
-                { "radius", "1000" }
+                { "radius", radius.ToString(CultureInfo.InvariantCulture) }
             };
 
             try
