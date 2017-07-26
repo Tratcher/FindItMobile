@@ -50,11 +50,12 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <ViewCell.ContextActions>
-                                <MenuItem Clicked="OnDone" CommandParameter="{Binding Item.Id}" Text="Done" IsDestructive="false" />
-                            </ViewCell.ContextActions>
                             <StackLayout Padding="10">
                                 <Entry Text="{Binding Text}" x:Name="{Binding Item.Id}" FontSize="16" Unfocused="OnUpdateText"/>
+                            <Button Text="Done"
+                                Clicked="OnDone"
+                                CommandParameter="{Binding Item.Id}"
+                                VerticalOptions="CenterAndExpand" />
                             </StackLayout>
                         </ViewCell>
                     </DataTemplate>

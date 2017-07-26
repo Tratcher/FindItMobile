@@ -25,8 +25,8 @@ namespace FindIt.Views
 
 		public async void OnDone(object sender, EventArgs e)
 		{
-            var item = sender as MenuItem;
-            var btn = sender as MenuItem;
+            var item = sender as Button;
+            var btn = sender as Button;
 
 			var doneItem = item.BindingContext as Item;
 
@@ -56,7 +56,6 @@ namespace FindIt.Views
 				}
 
                 btn.Text = "Undo";
-                var textEl = ItemsListView.FindByName<Entry>(doneItem.Id);
             }
             else
             {
