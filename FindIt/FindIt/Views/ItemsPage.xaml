@@ -35,7 +35,6 @@
                 IsShowingUser="true"
                 HasZoomEnabled="true"
                 IsIndoorEnabled="true"
-                InitialCameraUpdate="-23.68, -46.87, 13, 30, 60"
                 VerticalOptions="FillAndExpand" />
 
             <ListView x:Name="ItemsListView"

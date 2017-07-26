@@ -5,6 +5,7 @@
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 	<uses-permission android:name="android.permission.INTERNET" />
 	<application android:label="FindIt.Android">
+    <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDW6WPp5AqLRVGgx7zM5c3THPf_RiRSARM"/>
     <activity android:name="com.microsoft.windowsazure.mobileservices.authentication.RedirectUrlActivity" android:launchMode="singleTop" android:noHistory="true">
       <intent-filter>
         <action android:name="android.intent.action.VIEW" />

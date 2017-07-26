@@ -29,6 +29,8 @@ namespace FindIt.Droid
 
             App.Init((ILocator)this, (IAuthenticate)this);
 
+            Xamarin.FormsGoogleMaps.Init(this, bundle); // initialize for Xamarin.Forms.GoogleMaps
+
             LoadApplication(new App());
         }
 
