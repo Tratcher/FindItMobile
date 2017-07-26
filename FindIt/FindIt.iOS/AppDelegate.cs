@@ -6,13 +6,14 @@ using Plugin.Geolocator;
 using Microsoft.WindowsAzure.MobileServices;
 using System.Collections.Generic;
 using FindIt.Models;
+using Plugin.Geolocator.Abstractions;
 
 namespace FindIt.iOS
 {
 	[Register("AppDelegate")]
 	public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate, ILocator, IAuthenticate
 	{
-        GeolocatorImplementation _locator = new GeolocatorImplementation();
+        IGeolocator _locator = CrossGeolocator.Current;
 
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
