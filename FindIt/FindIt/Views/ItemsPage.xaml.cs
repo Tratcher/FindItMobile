@@ -63,7 +63,6 @@ namespace FindIt.Views
 				doneItem.Longitude = null;
 				doneItem.Altitude = null;
 				doneItem.Accuracy = null;
-
                 btn.Text = "Done";
             }
 
@@ -115,6 +114,7 @@ namespace FindIt.Views
                 refreshing = true;
                 ItemsListView.ItemsSource = await manager.GetItemsAsync(syncItems);
                 refreshing = false;
+
             }
         }
 

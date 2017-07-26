@@ -52,7 +52,7 @@
                         <ViewCell>
                             <StackLayout Padding="10">
                                 <Entry Text="{Binding Text}" x:Name="{Binding Item.Id}" FontSize="16" Unfocused="OnUpdateText"/>
-                            <Button Text="Done"
+                            <Button Text="{ Binding BtnText }"
                                 Clicked="OnDone"
                                 CommandParameter="{Binding Item.Id}"
                                 VerticalOptions="CenterAndExpand" />
