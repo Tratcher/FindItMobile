@@ -16,6 +16,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.MobileServices;
 using FindIt.Models;
+using System.Globalization;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
 
 #if OFFLINE_SYNC_ENABLED
 using Microsoft.WindowsAzure.MobileServices.SQLiteStore;
@@ -101,6 +104,30 @@ namespace FindIt
                 Debug.WriteLine(@"Sync error: {0}", e.Message);
             }
             return null;
+        }
+
+        public async Task<JToken> GetItemLocations()
+        {
+            var loc = await App.Locator.GetLocationAsync();
+            // if (loc != null)
+            {
+                var parameters = new Dictionary<string, string>()
+                {
+                    { "user", CurrentClient.CurrentUser.UserId },
+                    { "latitude", loc?.Latitude.ToString(CultureInfo.InvariantCulture) },
+                    { "longitude", loc?.Longitude.ToString(CultureInfo.InvariantCulture) },
+                    { "radius", "1000" }
+                };
+
+                try
+                {
+                    return await CurrentClient.InvokeApiAsync("GetLocations", HttpMethod.Get, parameters);
+                }
+                catch (Exception ex)
+                {
+                }
+                return null;
+            }
         }
 
         public async Task SaveTaskAsync(Item item)
