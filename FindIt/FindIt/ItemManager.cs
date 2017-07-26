@@ -106,28 +106,24 @@ namespace FindIt
             return null;
         }
 
-        public async Task<JToken> GetItemLocations()
+        public async Task<JToken> GetItemLocations(Local loc)
         {
-            var loc = await App.Locator.GetLocationAsync();
-            // if (loc != null)
+            var parameters = new Dictionary<string, string>()
             {
-                var parameters = new Dictionary<string, string>()
-                {
-                    { "user", CurrentClient.CurrentUser.UserId },
-                    { "latitude", loc?.Latitude.ToString(CultureInfo.InvariantCulture) },
-                    { "longitude", loc?.Longitude.ToString(CultureInfo.InvariantCulture) },
-                    { "radius", "1000" }
-                };
+                { "userID", CurrentClient.CurrentUser.UserId },
+                { "latitude", loc?.Latitude.ToString(CultureInfo.InvariantCulture) },
+                { "longitude", loc?.Longitude.ToString(CultureInfo.InvariantCulture) },
+                { "radius", "1000" }
+            };
 
-                try
-                {
-                    return await CurrentClient.InvokeApiAsync("GetLocations", HttpMethod.Get, parameters);
-                }
-                catch (Exception ex)
-                {
-                }
-                return null;
+            try
+            {
+                return await CurrentClient.InvokeApiAsync("GetLocations", HttpMethod.Get, parameters);
             }
+            catch (Exception ex)
+            {
+            }
+            return null;
         }
 
         public async Task SaveTaskAsync(Item item)

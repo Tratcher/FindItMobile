@@ -4,6 +4,7 @@ using FindIt.Models;
 using Xamarin.Forms;
 using System.Threading.Tasks;
 using Xamarin.Forms.GoogleMaps;
+using Newtonsoft.Json.Linq;
 
 namespace FindIt.Views
 {
@@ -42,17 +43,6 @@ namespace FindIt.Views
 					doneItem.Longitude = loc.Longitude;
 					doneItem.Altitude = loc.Altitude;
 					doneItem.Accuracy = loc.Accuracy;
-
-                    var pos = new Position(loc.Latitude, loc.Longitude);
-                    pin = new Pin()
-                    {
-                        Type = PinType.Place,
-                        Label = doneItem.Text,
-                        Position = pos
-                    };
-
-                    map.Pins.Add(pin);
-                    map.MoveToRegion(MapSpan.FromCenterAndRadius(pos, Distance.FromMeters(5)));
                 }
             }
             else
@@ -61,7 +51,6 @@ namespace FindIt.Views
 				doneItem.Longitude = null;
 				doneItem.Altitude = null;
 				doneItem.Accuracy = null;
-
             }
 
             await manager.SaveTaskAsync(doneItem);
@@ -123,8 +112,31 @@ namespace FindIt.Views
             using (var scope = new ActivityIndicatorScope(syncIndicator, showActivityIndicator))
             {
                 ItemsListView.ItemsSource = await manager.GetItemsAsync(syncItems);
-                var location = await manager.GetItemLocations();
 
+                var loc = await App.Locator.GetLocationAsync();
+                map.Pins.Clear();
+                map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(loc.Latitude, loc.Longitude), Distance.FromMeters(100)));
+
+                var itemGroups = await manager.GetItemLocations(loc);
+
+                foreach (var group in itemGroups)
+                {
+                    foreach (var item in group)
+                    {
+                        foreach (var destination in item)
+                        { 
+                            var pos = new Position(destination.Value<double>("latitude"), destination.Value<double>("longitude"));
+                            var pin = new Pin()
+                            {
+                                Type = PinType.Place,
+                                Label = ((JProperty)group).Name,
+                                Position = pos
+                            };
+
+                            map.Pins.Add(pin);
+                        }
+                    }
+                }
             }
         }
 
