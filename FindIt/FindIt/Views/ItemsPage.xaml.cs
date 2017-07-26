@@ -37,6 +37,15 @@ namespace FindIt.Views
 		}
         */
 
+		public void OnDelete(object sender, EventArgs e)
+		{
+            var item = sender as MenuItem;
+			var deletedItem = item.BindingContext as Item;
+
+			//var mi = ((MenuItem)sender);
+            MessagingCenter.Send(this, "DeleteItem", deletedItem);
+		}
+
 		protected async override void OnAppearing()
 		{
 			base.OnAppearing();

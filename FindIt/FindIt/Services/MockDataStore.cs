@@ -88,6 +88,7 @@ namespace FindIt.Services
 
 			foreach (Item item in _items)
 			{
+                Console.WriteLine("id is " + item.Id);
 				items.Add(item);
 			}
 

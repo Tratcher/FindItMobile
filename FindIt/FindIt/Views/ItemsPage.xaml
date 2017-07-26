@@ -34,9 +34,10 @@
                 HeightRequest="200"
                 IsShowingUser="true"
                 HasZoomEnabled="true"
+                IsIndoorEnabled="true"
                 InitialCameraUpdate="-23.68, -46.87, 13, 30, 60"
                 VerticalOptions="FillAndExpand" />
-                
+
             <ListView x:Name="ItemsListView"
     		    ItemsSource="{Binding Items}"
                 VerticalOptions="FillAndExpand"
@@ -50,7 +51,11 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <StackLayout Padding="10, 10, 10, 50">
+                            <ViewCell.ContextActions>
+                                <MenuItem Clicked="OnDelete" CommandParameter="{Binding Item.Id}"
+                                   Text="Delete" IsDestructive="True" />
+                             </ViewCell.ContextActions>
+                            <StackLayout Padding="10">
                                 <Switch IsToggled="{Binding Found}" Toggled="OnStatusChange" />
                                 <Label Text="{Binding Text}"
                                        LineBreakMode="NoWrap"
