@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Linq;
 using FindIt.Models;
 
@@ -56,7 +56,6 @@ namespace FindIt.Views
 				}
 
                 btn.Text = "Undo";
-                var textEl = ItemsListView.FindByName<Entry>(doneItem.Id);
             }
             else
             {
