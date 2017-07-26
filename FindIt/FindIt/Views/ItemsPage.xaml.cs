@@ -42,29 +42,18 @@ namespace FindIt.Views
 					doneItem.Longitude = loc.Longitude;
 					doneItem.Altitude = loc.Altitude;
 					doneItem.Accuracy = loc.Accuracy;
-				}
 
-				var geocoder = new Xamarin.Forms.GoogleMaps.Geocoder();
-				var positions = await geocoder.GetPositionsForAddressAsync($"{ doneItem.Latitude }, { doneItem.Longitude }");
-				if (positions.Count() > 0)
-				{
-					var pos = positions.First();
-					
-
+                    var pos = new Position(loc.Latitude, loc.Longitude);
                     pin = new Pin()
                     {
                         Type = PinType.Place,
                         Label = doneItem.Text,
-                        Position = new Position(pos.Latitude, pos.Longitude)
+                        Position = pos
                     };
 
                     map.Pins.Add(pin);
                     map.MoveToRegion(MapSpan.FromCenterAndRadius(pos, Distance.FromMeters(5)));
-				}
-				else
-				{
-					await this.DisplayAlert("Not found", "Geocoder returns no results", "Close");
-				}
+                }
             }
             else
             {

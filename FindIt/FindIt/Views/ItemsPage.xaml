@@ -34,7 +34,6 @@
                 HeightRequest="200"
                 IsShowingUser="true"
                 HasZoomEnabled="true"
-                MapStyle="dark"
                 IsIndoorEnabled="true"
                 VerticalOptions="FillAndExpand" />
 
