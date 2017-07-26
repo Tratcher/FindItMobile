@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Linq;
 using FindIt.Models;
 using Xamarin.Forms;
@@ -30,6 +30,8 @@ namespace FindIt.Views
 
             doneItem.Found = !doneItem.Found;
 
+            Pin pin = null;
+
             if(doneItem.Found)
             {
 				var loc = await App.Locator.GetLocationAsync();
@@ -46,14 +48,22 @@ namespace FindIt.Views
 				if (positions.Count() > 0)
 				{
 					var pos = positions.First();
-					map.MoveToRegion(MapSpan.FromCenterAndRadius(pos, Distance.FromMeters(5)));
+					
+
+                    pin = new Pin()
+                    {
+                        Type = PinType.Place,
+                        Label = doneItem.Text,
+                        Position = new Position(pos.Latitude, pos.Longitude)
+                    };
+
+                    map.Pins.Add(pin);
+                    map.MoveToRegion(MapSpan.FromCenterAndRadius(pos, Distance.FromMeters(5)));
 				}
 				else
 				{
 					await this.DisplayAlert("Not found", "Geocoder returns no results", "Close");
 				}
-
-                btn.Text = "Undo";
             }
             else
             {
@@ -61,10 +71,12 @@ namespace FindIt.Views
 				doneItem.Longitude = null;
 				doneItem.Altitude = null;
 				doneItem.Accuracy = null;
-                btn.Text = "Done";
+
             }
 
             await manager.SaveTaskAsync(doneItem);
+
+            btn.Text = doneItem.Found ? "Undo" : "Done";
 		}
 
 		public async void OnUpdateText(object sender, EventArgs e)
@@ -110,7 +122,7 @@ namespace FindIt.Views
             using (var scope = new ActivityIndicatorScope(syncIndicator, showActivityIndicator))
             {
                 ItemsListView.ItemsSource = await manager.GetItemsAsync(syncItems);
-                await manager.GetItemLocations();
+                var location = await manager.GetItemLocations();
 
             }
         }

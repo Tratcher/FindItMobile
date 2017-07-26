@@ -21,11 +21,6 @@ namespace FindIt.Models
             set { SetProperty(ref found, value); }
         }
 
-        public string BtnText
-        {
-            get { return found ? "Undo" : "Done"; }
-        }
-
         [JsonProperty(PropertyName = "latitude")]
         double? latitude;
         public double? Latitude
