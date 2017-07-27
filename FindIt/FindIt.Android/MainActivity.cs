@@ -84,17 +84,24 @@ namespace FindIt.Droid
                         user.UserId);
                     success = true;
                 }
+                else
+                {
+                    message = "unable to sign in.";
+                }
             }
             catch (Exception ex)
             {
                 message = ex.Message;
             }
 
-            // Display the success or failure message.
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.SetMessage(message);
-            builder.SetTitle("Sign-in result");
-            builder.Create().Show();
+            if (!success)
+            {
+                // Display the success or failure message.
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.SetMessage(message);
+                builder.SetTitle("Sign-in result");
+                builder.Create().Show();
+            }
 
             return success;
         }

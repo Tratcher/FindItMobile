@@ -72,11 +72,22 @@ namespace FindIt.iOS
                         message = string.Format("You are now signed-in as {0}.", user.UserId);
                         success = true;
                     }
+                    else
+                    {
+                        message = "unable to sign in.";
+                    }
                 }
             }
             catch (Exception ex)
             {
                 message = ex.Message;
+            }
+
+            if (!success)
+            {
+                // Display the success or failure message.
+                UIAlertView avAlert = new UIAlertView("Sign-in result", message, null, "OK", null);
+                avAlert.Show();
             }
 
             return success;
