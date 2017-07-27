@@ -122,6 +122,10 @@ namespace FindIt.Views
                 var radius = map.VisibleRegion.Radius.Meters;
                 
                 var itemGroups = await manager.GetItemLocations(new Local() { Latitude = target.Latitude, Longitude = target.Longitude }, radius);
+                if (itemGroups == null)
+                {
+                    return;
+                }
 
                 foreach (var group in itemGroups)
                 {
