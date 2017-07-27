@@ -76,12 +76,12 @@ namespace FindIt.Views
             // Refresh items only when authenticated.
             if (authenticated == true)
             {
+                // Hide the Sign-in button.
+                this.loginButton.IsVisible = false;
+
                 // Set syncItems to true in order to synchronize the data
                 // on startup when running in offline mode.
                 await RefreshItems(true, syncItems: false);
-
-                // Hide the Sign-in button.
-                this.loginButton.IsVisible = false;
             }
         }
 
@@ -90,10 +90,10 @@ namespace FindIt.Views
             if (authenticated == true)
             {
                 await RefreshItems(false, syncItems: false);
-
-                var list = sender as ListView;
-                list.EndRefresh();
             }
+
+            var list = sender as ListView;
+            list.EndRefresh();
         }
 
         async void loginButton_Clicked(object sender, EventArgs e)
@@ -151,11 +151,18 @@ namespace FindIt.Views
 
         public async void OnAdd(object sender, EventArgs e)
         {
-            var item = new Item { Text = newItemName.Text };
-            await AddItem(item);
+            if (authenticated == true)
+            {
+                var text = newItemName.Text?.Trim();
+                if (!string.IsNullOrEmpty(text))
+                {
+                    var item = new Item { Text = text };
+                    await AddItem(item);
+                }
 
-            newItemName.Text = string.Empty;
-            newItemName.Unfocus();
+                newItemName.Text = string.Empty;
+                newItemName.Unfocus();
+            }
         }
 
         async Task AddItem(Item item)
@@ -163,57 +170,7 @@ namespace FindIt.Views
             await manager.SaveTaskAsync(item);
             ItemsListView.ItemsSource = await manager.GetItemsAsync();
         }
-
-        async void OnStatusChange(object sender, ToggledEventArgs args)
-        {
-            var control = sender as Switch;
-
-            var item = control.BindingContext as Item;
-            if (item == null)
-            {
-                return;
-            }
-
-            if (args.Value)
-            {
-                item.Found = true;
-                var loc = await App.Locator.GetLocationAsync();
-                if (loc != null)
-                {
-                    item.Latitude = loc.Latitude;
-                    item.Longitude = loc.Longitude;
-                    item.Altitude = loc.Altitude;
-                    item.Accuracy = loc.Accuracy;
-                }
-
-				var geocoder = new Xamarin.Forms.GoogleMaps.Geocoder();
-                var positions = await geocoder.GetPositionsForAddressAsync($"{ item.Latitude }, { item.Longitude }");
-				if (positions.Count() > 0)
-				{
-					var pos = positions.First();
-					map.MoveToRegion(MapSpan.FromCenterAndRadius(pos, Distance.FromMeters(5)));
-				}
-				else
-				{
-					await this.DisplayAlert("Not found", "Geocoder returns no results", "Close");
-				}
-            }
-            else
-            {
-                item.Found = false;
-                item.Latitude = null;
-                item.Longitude = null;
-                item.Altitude = null;
-                item.Accuracy = null;
-            }
-
-            await manager.SaveTaskAsync(item);
-
-            // Manually deselect item
-            ItemsListView.SelectedItem = null;
-        }
-
-
+        
         private class ActivityIndicatorScope : IDisposable
         {
             private bool showIndicator;

@@ -9,6 +9,8 @@
         
     <ContentPage.Content>
         <StackLayout>
+            <Button x:Name="loginButton" Text="Sign-in" MinimumHeightRequest="30" Clicked="loginButton_Clicked"/>
+
             <StackLayout Grid.Row="0" BackgroundColor="#5ABAFF" Padding="10,30,10,5">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -22,7 +24,6 @@
                 </Grid>
             </StackLayout>
             
-            <Button x:Name="loginButton" Text="Sign-in" MinimumHeightRequest="30" Clicked="loginButton_Clicked"/>
             <ActivityIndicator 
                        HorizontalOptions="Center"
                        VerticalOptions="Center"
