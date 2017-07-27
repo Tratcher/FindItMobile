@@ -110,7 +110,6 @@ namespace FindIt
         {
             var parameters = new Dictionary<string, string>()
             {
-                { "userID", CurrentClient.CurrentUser.UserId },
                 { "latitude", loc?.Latitude.ToString(CultureInfo.InvariantCulture) },
                 { "longitude", loc?.Longitude.ToString(CultureInfo.InvariantCulture) },
                 { "radius", radius.ToString(CultureInfo.InvariantCulture) }
