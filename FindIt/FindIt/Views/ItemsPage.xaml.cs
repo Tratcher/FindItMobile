@@ -70,6 +70,9 @@ namespace FindIt.Views
 		{
 			base.OnAppearing();
 
+            var loc = await App.Locator.GetLocationAsync();
+            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(loc.Latitude, loc.Longitude), Distance.FromMeters(1000)));
+
             // Refresh items only when authenticated.
             if (authenticated == true)
             {
@@ -101,12 +104,10 @@ namespace FindIt.Views
             // Set syncItems to true to synchronize the data on startup when offline is enabled.
             if (authenticated == true)
             {
-                var loc = await App.Locator.GetLocationAsync();
-                map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(loc.Latitude, loc.Longitude), Distance.FromMeters(1000)));
-
-                await RefreshItems(true, syncItems: false);
 				// Hide the Sign-in button.
 				this.loginButton.IsVisible = false;
+
+                await RefreshItems(true, syncItems: false);
             }
         }
 
