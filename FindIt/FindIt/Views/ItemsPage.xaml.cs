@@ -71,7 +71,7 @@ namespace FindIt.Views
 			base.OnAppearing();
 
             var loc = await App.Locator.GetLocationAsync();
-            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(loc.Latitude, loc.Longitude), Distance.FromMeters(1000)));
+            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(loc.Latitude, loc.Longitude), Distance.FromMeters(1000)), animate: false);
 
             // Refresh items only when authenticated.
             if (authenticated == true)
