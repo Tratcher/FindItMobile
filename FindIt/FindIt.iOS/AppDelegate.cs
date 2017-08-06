@@ -7,40 +7,27 @@ using Microsoft.WindowsAzure.MobileServices;
 using System.Collections.Generic;
 using FindIt.Models;
 using Plugin.Geolocator.Abstractions;
+using Plugin.Compass.Abstractions;
+using Plugin.Compass;
 
 namespace FindIt.iOS
 {
 	[Register("AppDelegate")]
-	public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate, ILocator, IAuthenticate
+	public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate, IAuthenticate
 	{
         IGeolocator _locator = CrossGeolocator.Current;
+        ICompass _compass = CrossCompass.Current;
 
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
 			global::Xamarin.Forms.Forms.Init();
             // Register interfaces
-            App.Init(this, this);
+            App.Init(_locator, _compass, this);
             Xamarin.FormsGoogleMaps.Init("AIzaSyDW6WPp5AqLRVGgx7zM5c3THPf_RiRSARM");
 			LoadApplication(new App());
 
 			return base.FinishedLaunching(app, options);
 		}
-
-        public async Task<Local> GetLocationAsync()
-        {
-            var loc = await _locator.GetPositionAsync(timeout: new System.TimeSpan(0, 0, 10));
-            if (loc == null)
-            {
-                return null;
-            }
-            return new Local()
-            {
-                Latitude = loc.Latitude,
-                Longitude = loc.Longitude,
-                Altitude = loc.Altitude,
-                Accuracy = loc.Accuracy
-            };
-        }
 
 		public static Func<NSUrl, bool> ResumeWithURL;
 

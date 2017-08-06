@@ -10,9 +10,11 @@ namespace FindIt.Views
 {
 	public partial class ItemsPage : ContentPage
     {
-
         // Track whether the user has authenticated.
         bool authenticated = false;
+        double _heading = 0;
+        Position _position;
+        bool _following = true;
 
         ItemManager manager;
 
@@ -32,11 +34,9 @@ namespace FindIt.Views
 
             doneItem.Found = !doneItem.Found;
 
-            Pin pin = null;
-
             if(doneItem.Found)
             {
-				var loc = await App.Locator.GetLocationAsync();
+				var loc = await App.Locator.GetPositionAsync();
 				if (loc != null)
 				{
 					doneItem.Latitude = loc.Latitude;
@@ -70,8 +70,14 @@ namespace FindIt.Views
 		{
 			base.OnAppearing();
 
-            var loc = await App.Locator.GetLocationAsync();
-            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(loc.Latitude, loc.Longitude), Distance.FromMeters(1000)), animate: false);
+            var loc = await App.Locator.GetPositionAsync();
+            _position = new Position(loc.Latitude, loc.Longitude);
+            map.MoveToRegion(MapSpan.FromCenterAndRadius(_position, Distance.FromMeters(50)), animate: false);
+            await Task.Delay(TimeSpan.FromSeconds(2)); // Wait for the map to settle
+
+            App.Locator.PositionChanged += Locator_PositionChanged;
+            App.Compass.CompassChanged += Compass_CompassChanged;
+            map.MyLocationButtonClicked += Map_MyLocationButtonClicked;
 
             // Refresh items only when authenticated.
             if (authenticated == true)
@@ -83,6 +89,54 @@ namespace FindIt.Views
                 // on startup when running in offline mode.
                 await RefreshItems(true, syncItems: false);
             }
+
+            _following = true;
+            FollowUser();
+        }
+
+        private async void Map_MyLocationButtonClicked(object sender, MyLocationButtonClickedEventArgs e)
+        {
+            // TODO: Update UI to indicate following state
+            if (!_following)
+            {
+                _following = true;
+                await Task.Delay(TimeSpan.FromSeconds(2));
+                FollowUser();
+            }
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            App.Locator.PositionChanged -= Locator_PositionChanged;
+            App.Compass.CompassChanged -= Compass_CompassChanged;
+            _following = false;
+        }
+
+        private async void FollowUser()
+        {
+            while (_following)
+            {
+                var oldCamera = map.CameraPosition;
+                var cameraUpdate = CameraUpdateFactory.NewCameraPosition(new CameraPosition(
+                    _position, oldCamera.Zoom, _heading));
+                var status = await map.AnimateCamera(cameraUpdate, TimeSpan.FromSeconds(1));
+                if (status == AnimationStatus.Canceled)
+                {
+                    // _following = false; // Make following an explicit UI opt-in/out.
+                    await Task.Delay(TimeSpan.FromSeconds(2)); // Wait for them to finish their action (e.g. zoom)
+                }
+            }
+        }
+
+        private void Locator_PositionChanged(object sender, Plugin.Geolocator.Abstractions.PositionEventArgs e)
+        {
+            _position = new Position(e.Position.Latitude, e.Position.Longitude);
+        }
+
+        private void Compass_CompassChanged(object sender, Plugin.Compass.Abstractions.CompassChangedEventArgs e)
+        {
+            _heading = e.Heading;
         }
 
         public async void OnListRefresh(object sender, EventArgs e)
@@ -122,7 +176,7 @@ namespace FindIt.Views
                 var target = map.VisibleRegion.Center;
                 var radius = map.VisibleRegion.Radius.Meters;
                 
-                var itemGroups = await manager.GetItemLocations(new Local() { Latitude = target.Latitude, Longitude = target.Longitude }, radius);
+                var itemGroups = await manager.GetItemLocations(target, radius);
                 if (itemGroups == null)
                 {
                     return;

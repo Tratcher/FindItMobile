@@ -7,18 +7,17 @@
  */
 //#define OFFLINE_SYNC_ENABLED
 
+using FindIt.Models;
+using Microsoft.WindowsAzure.MobileServices;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.WindowsAzure.MobileServices;
-using FindIt.Models;
 using System.Globalization;
 using System.Net.Http;
-using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
+using Xamarin.Forms.GoogleMaps;
 
 #if OFFLINE_SYNC_ENABLED
 using Microsoft.WindowsAzure.MobileServices.SQLiteStore;
@@ -106,12 +105,12 @@ namespace FindIt
             return null;
         }
 
-        public async Task<JToken> GetItemLocations(Local loc, double radius)
+        public async Task<JToken> GetItemLocations(Position loc, double radius)
         {
             var parameters = new Dictionary<string, string>()
             {
-                { "latitude", loc?.Latitude.ToString(CultureInfo.InvariantCulture) },
-                { "longitude", loc?.Longitude.ToString(CultureInfo.InvariantCulture) },
+                { "latitude", loc.Latitude.ToString(CultureInfo.InvariantCulture) },
+                { "longitude", loc.Longitude.ToString(CultureInfo.InvariantCulture) },
                 { "radius", radius.ToString(CultureInfo.InvariantCulture) }
             };
 
@@ -119,7 +118,7 @@ namespace FindIt
             {
                 return await CurrentClient.InvokeApiAsync("GetLocations", HttpMethod.Get, parameters);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
             return null;

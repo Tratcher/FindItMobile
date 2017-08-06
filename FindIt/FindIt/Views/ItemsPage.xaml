@@ -11,7 +11,7 @@
         <StackLayout>
             <Button x:Name="loginButton" Text="Sign-in" MinimumHeightRequest="40" Clicked="loginButton_Clicked"/>
 
-            <StackLayout Grid.Row="0" BackgroundColor="#5ABAFF" Padding="10,15,10,5" MinimumHeightRequest="40" >
+            <StackLayout Grid.Row="0" BackgroundColor="#5ABAFF" Padding="10,10,10,5" MinimumHeightRequest="40" >
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -22,19 +22,20 @@
                 </Grid>
             </StackLayout>
             
-            <ActivityIndicator 
+            <maps:Map 
+                x:Name="map"
+                HeightRequest="250"
+                IsShowingUser="true"
+                HasZoomEnabled="true"
+                IsIndoorEnabled="true"
+                VerticalOptions="FillAndExpand" />
+
+            <ActivityIndicator
                        HorizontalOptions="Center"
                        VerticalOptions="Center"
                        IsVisible="False"
                        IsEnabled="True"
                        x:Name="syncIndicator"/>
-            <maps:Map 
-                x:Name="map"
-                HeightRequest="200"
-                IsShowingUser="true"
-                HasZoomEnabled="true"
-                IsIndoorEnabled="true"
-                VerticalOptions="FillAndExpand" />
 
             <ListView x:Name="ItemsListView"
     		    ItemsSource="{Binding Items}"
@@ -50,7 +51,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <StackLayout Grid.Row="0" Padding="10">
+                            <StackLayout Grid.Row="0" Padding="10,0,10,0">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>

@@ -1,21 +1,22 @@
-﻿using System;
-using System.Threading.Tasks;
-using Android.App;
-using Android.Content;
+﻿using Android.App;
 using Android.Content.PM;
 using Android.Locations;
 using Android.OS;
-using Android.Util;
 using Microsoft.WindowsAzure.MobileServices;
-using Plugin.Geolocator.Abstractions;
+using Plugin.Compass;
+using Plugin.Compass.Abstractions;
 using Plugin.Geolocator;
+using Plugin.Geolocator.Abstractions;
+using System;
+using System.Threading.Tasks;
 
 namespace FindIt.Droid
 {
     [Activity(Label = "FindIt.Android", Theme = "@style/MyTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity, ILocator, IAuthenticate
+    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity, IAuthenticate
     {
         IGeolocator _locator = CrossGeolocator.Current;
+        ICompass _compass = CrossCompass.Current;
         public Location LastKnownLocation;
 
         protected override void OnCreate(Bundle bundle)
@@ -27,7 +28,7 @@ namespace FindIt.Droid
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
 
-            App.Init((ILocator)this, (IAuthenticate)this);
+            App.Init(_locator, _compass, (IAuthenticate)this);
 
             Xamarin.FormsGoogleMaps.Init(this, bundle); // initialize for Xamarin.Forms.GoogleMaps
 
@@ -39,6 +40,7 @@ namespace FindIt.Droid
             base.OnPause();
 
             await _locator.StopListeningAsync();
+            _compass.Stop();
         }
 
         protected async override void OnResume()
@@ -46,25 +48,8 @@ namespace FindIt.Droid
             base.OnResume();
 
             await _locator.StartListeningAsync(1, 1);
+            _compass.Start(SensorSpeed.UI);
         }
-
-        public async Task<Local> GetLocationAsync()
-        {
-            var location = await _locator.GetPositionAsync();
-            if (location == null)
-            {
-                return null;
-            }
-            return new Local()
-            {
-                Latitude = location.Latitude,
-                Longitude = location.Longitude,
-                Altitude = location.Altitude,
-                Accuracy = location.Accuracy
-            };
-        }
-
-
 
         // Define a authenticated user.
         private MobileServiceUser user;
