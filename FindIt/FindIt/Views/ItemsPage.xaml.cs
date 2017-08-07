@@ -1,14 +1,14 @@
-﻿﻿using System;
-using System.Linq;
-using FindIt.Models;
-using Xamarin.Forms;
+﻿using FindIt.Models;
+using FindIt.ViewModels;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
-using Newtonsoft.Json.Linq;
 
 namespace FindIt.Views
 {
-	public partial class ItemsPage : ContentPage
+    public partial class ItemsPage : ContentPage
     {
         // Track whether the user has authenticated.
         bool authenticated = false;
@@ -19,56 +19,58 @@ namespace FindIt.Views
         ItemManager manager;
 
         public ItemsPage()
-		{
-			InitializeComponent();
-            
-            manager = ItemManager.DefaultManager;
-		}
+        {
+            InitializeComponent();
 
-		public async void OnDone(object sender, EventArgs e)
-		{
-            var item = sender as Button;
+            manager = ItemManager.DefaultManager;
+        }
+
+        public async void OnDone(object sender, EventArgs e)
+        {
             var btn = sender as Button;
 
-			var doneItem = item.BindingContext as Item;
+            var itemView = btn.BindingContext as ItemListView;
+            var item = itemView.Item;
 
-            doneItem.Found = !doneItem.Found;
+            item.Found = !item.Found;
 
-            if(doneItem.Found)
+            if (item.Found)
             {
-				var loc = await App.Locator.GetPositionAsync();
-				if (loc != null)
-				{
-					doneItem.Latitude = loc.Latitude;
-					doneItem.Longitude = loc.Longitude;
-					doneItem.Altitude = loc.Altitude;
-					doneItem.Accuracy = loc.Accuracy;
+                var loc = await App.Locator.GetPositionAsync();
+                if (loc != null)
+                {
+                    item.Latitude = loc.Latitude;
+                    item.Longitude = loc.Longitude;
+                    item.Altitude = loc.Altitude;
+                    item.Accuracy = loc.Accuracy;
                 }
+
+                RemovePins(itemView);
             }
             else
             {
-				doneItem.Latitude = null;
-				doneItem.Longitude = null;
-				doneItem.Altitude = null;
-				doneItem.Accuracy = null;
+                item.Latitude = null;
+                item.Longitude = null;
+                item.Altitude = null;
+                item.Accuracy = null;
+
+                AddPins(itemView);
             }
 
-            await manager.SaveTaskAsync(doneItem);
-
-            btn.Text = doneItem.Found ? "Undo" : "Done";
-		}
-
-		public async void OnUpdateText(object sender, EventArgs e)
-		{
-			var item = sender as Entry;
-            var updatedItem = item.BindingContext as Item;
-
-            await manager.SaveTaskAsync(updatedItem);
+            await manager.SaveItemAsync(item);
         }
 
-		protected async override void OnAppearing()
-		{
-			base.OnAppearing();
+        public async void OnUpdateText(object sender, EventArgs e)
+        {
+            var entry = sender as Entry;
+            var updatedItem = entry.BindingContext as ItemListView;
+
+            await manager.SaveItemAsync(updatedItem.Item);
+        }
+
+        protected async override void OnAppearing()
+        {
+            base.OnAppearing();
 
             var loc = await App.Locator.GetPositionAsync();
             _position = new Position(loc.Latitude, loc.Longitude);
@@ -84,6 +86,7 @@ namespace FindIt.Views
             {
                 // Hide the Sign-in button.
                 this.loginButton.IsVisible = false;
+                addItemPanel.IsVisible = true;
 
                 // Set syncItems to true in order to synchronize the data
                 // on startup when running in offline mode.
@@ -158,8 +161,9 @@ namespace FindIt.Views
             // Set syncItems to true to synchronize the data on startup when offline is enabled.
             if (authenticated == true)
             {
-				// Hide the Sign-in button.
-				this.loginButton.IsVisible = false;
+                // Hide the Sign-in button.
+                this.loginButton.IsVisible = false;
+                addItemPanel.IsVisible = true;
 
                 await RefreshItems(true, syncItems: false);
             }
@@ -169,38 +173,46 @@ namespace FindIt.Views
         {
             using (var scope = new ActivityIndicatorScope(syncIndicator, showActivityIndicator))
             {
-                ItemsListView.ItemsSource = await manager.GetItemsAsync(syncItems);
-
                 map.Pins.Clear();
 
                 var target = map.VisibleRegion.Center;
                 var radius = map.VisibleRegion.Radius.Meters;
-                
-                var itemGroups = await manager.GetItemLocations(target, radius);
-                if (itemGroups == null)
-                {
-                    return;
-                }
+                await manager.RefreshItemsAsync(target, radius, syncItems);
+                ItemsListView.ItemsSource = manager.Items;
 
-                foreach (var group in itemGroups)
+                foreach (var item in manager.Items)
                 {
-                    foreach (var item in group)
-                    {
-                        foreach (var destination in item)
-                        { 
-                            var pos = new Position(destination.Value<double>("latitude"), destination.Value<double>("longitude"));
-                            var pin = new Pin()
-                            {
-                                Type = PinType.Place,
-                                Label = ((JProperty)group).Name,
-                                Position = pos
-                            };
-
-                            map.Pins.Add(pin);
-                        }
-                    }
+                    AddPins(item);
                 }
             }
+        }
+
+        private void AddPins(ItemListView item)
+        {
+            foreach (var destination in item.Locations)
+            {
+                var pin = new Pin()
+                {
+                    Type = PinType.Place,
+                    Label = item.Text,
+                    Position = destination
+                };
+
+                map.Pins.Add(pin);
+            }
+        }
+
+        private void RemovePins(ItemListView item)
+        {
+            var pinsToRemove = new List<Pin>();
+            foreach (var pin in map.Pins)
+            {
+                if (string.Equals(pin.Label, item.Text, StringComparison.OrdinalIgnoreCase))
+                {
+                    pinsToRemove.Add(pin);
+                }
+            }
+            pinsToRemove.ForEach(pin => map.Pins.Remove(pin));
         }
 
         public async void OnAdd(object sender, EventArgs e)
@@ -221,8 +233,8 @@ namespace FindIt.Views
 
         async Task AddItem(Item item)
         {
-            await manager.SaveTaskAsync(item);
-            ItemsListView.ItemsSource = await manager.GetItemsAsync();
+            await manager.SaveItemAsync(item);
+            await RefreshItems(true, syncItems: false);
         }
         
         private class ActivityIndicatorScope : IDisposable

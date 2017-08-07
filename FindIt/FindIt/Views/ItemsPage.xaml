@@ -11,7 +11,7 @@
         <StackLayout>
             <Button x:Name="loginButton" Text="Sign-in" MinimumHeightRequest="40" Clicked="loginButton_Clicked"/>
 
-            <StackLayout Grid.Row="0" BackgroundColor="#5ABAFF" Padding="10,10,10,5" MinimumHeightRequest="40" >
+            <StackLayout x:Name="addItemPanel" IsVisible="False" Grid.Row="0" BackgroundColor="#5ABAFF" Padding="10,10,10,5" MinimumHeightRequest="40" >
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -58,10 +58,9 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <Entry Text="{Binding Text}" x:Name="{Binding Item.Id}" FontSize="16" Unfocused="OnUpdateText"/>
-                                    <Button Text="Done"
+                                    <Entry Text="{Binding Text}" FontSize="16" Unfocused="OnUpdateText"/>
+                                    <Button Text="{Binding ButtonText}"
                                         Clicked="OnDone"
-                                        CommandParameter="{Binding Item.Id}"
                                         VerticalOptions="CenterAndExpand" Grid.Column="1" />
                                 </Grid>
                             </StackLayout>

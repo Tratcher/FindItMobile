@@ -8,6 +8,7 @@
 //#define OFFLINE_SYNC_ENABLED
 
 using FindIt.Models;
+using FindIt.ViewModels;
 using Microsoft.WindowsAzure.MobileServices;
 using Newtonsoft.Json.Linq;
 using System;
@@ -15,6 +16,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xamarin.Forms.GoogleMaps;
@@ -78,7 +80,38 @@ namespace FindIt
             get { return itemTable is Microsoft.WindowsAzure.MobileServices.Sync.IMobileServiceSyncTable<Item>; }
         }
 
-        public async Task<ObservableCollection<Item>> GetItemsAsync(bool syncItems = false)
+        public ObservableCollection<ItemListView> Items { get; private set; }
+
+        public async Task RefreshItemsAsync(Position loc, double radius, bool syncItems)
+        {
+            Items = await GetItemsAsync(syncItems);
+            var items = await GetItemLocationsAsync(loc, radius);
+
+            if (items == null)
+            {
+                return;
+            }
+
+            foreach (var item in items)
+            {
+                foreach (var destinations in item)
+                {
+                    var locations = new List<Position>();
+                    foreach (var destination in destinations)
+                    {
+                        var pos = new Position(destination.Value<double>("latitude"), destination.Value<double>("longitude"));
+                        locations.Add(pos);
+                    }
+                    foreach (var itemView in Items.Where(i => string.Equals(i.Text, ((JProperty)item).Name, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        itemView.Locations.AddRange(locations);
+                        break; // Don't mark the location for duplicates
+                    }
+                }
+            }
+        }
+
+        private async Task<ObservableCollection<ItemListView>> GetItemsAsync(bool syncItems = false)
         {
             try
             {
@@ -88,11 +121,12 @@ namespace FindIt
                     await this.SyncAsync();
                 }
 #endif
-                IEnumerable<Item> items = await itemTable
+                var items = await itemTable
                     // .Where(item => !item.Found)
                     .ToEnumerableAsync();
+                var itemViews = items.Select(item => new ItemListView(item));
 
-                return new ObservableCollection<Item>(items);
+                return new ObservableCollection<ItemListView>(itemViews);
             }
             catch (MobileServiceInvalidOperationException msioe)
             {
@@ -105,7 +139,7 @@ namespace FindIt
             return null;
         }
 
-        public async Task<JToken> GetItemLocations(Position loc, double radius)
+        private async Task<JToken> GetItemLocationsAsync(Position loc, double radius)
         {
             var parameters = new Dictionary<string, string>()
             {
@@ -124,7 +158,7 @@ namespace FindIt
             return null;
         }
 
-        public async Task SaveTaskAsync(Item item)
+        public async Task SaveItemAsync(Item item)
         {
             if (item.Id == null)
             {
