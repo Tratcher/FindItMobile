@@ -105,7 +105,6 @@ namespace FindIt
                     foreach (var itemView in Items.Where(i => string.Equals(i.Text, ((JProperty)item).Name, StringComparison.OrdinalIgnoreCase)))
                     {
                         itemView.Locations.AddRange(locations);
-                        break; // Don't mark the location for duplicates
                     }
                 }
             }
@@ -134,8 +133,8 @@ namespace FindIt
                 item.Distance = shortestDistance;
             }
             
-            var sorted = Items.OrderBy(x => x.Distance).ToList();
-            for (int i = 0; i < sorted.Count(); i++)
+            var sorted = Items.OrderBy(x => x.Distance ?? int.MaxValue).ToList();
+            for (int i = 0; i < sorted.Count; i++)
             {
                 var newIndex = Items.IndexOf(sorted[i]);
                 if (newIndex != i)
