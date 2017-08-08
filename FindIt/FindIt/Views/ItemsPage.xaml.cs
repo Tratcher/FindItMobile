@@ -120,6 +120,7 @@ namespace FindIt.Views
         {
             while (_following)
             {
+                manager.RecalcuateDistanceAndReSort(_position);
                 var oldCamera = map.CameraPosition;
                 var cameraUpdate = CameraUpdateFactory.NewCameraPosition(new CameraPosition(
                     _position, oldCamera.Zoom, _heading));

@@ -38,5 +38,16 @@ namespace FindIt.ViewModels
         public string ButtonText => Item.Found ? "Undo" : "Done";
 
         public List<Position> Locations { get; } = new List<Position>();
+
+        int? distance;
+        public int? Distance
+        {
+            get => distance;
+            internal set
+            {
+                distance = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Distance"));
+            }
+        }
     }
 }

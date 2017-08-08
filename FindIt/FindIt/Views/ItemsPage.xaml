@@ -56,12 +56,14 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
                                     <Entry Text="{Binding Text}" FontSize="16" Unfocused="OnUpdateText"/>
+                                    <Label Text="{Binding Distance}" FontSize="12" Grid.Column="1" />
                                     <Button Text="{Binding ButtonText}"
                                         Clicked="OnDone"
-                                        VerticalOptions="CenterAndExpand" Grid.Column="1" />
+                                        VerticalOptions="CenterAndExpand" Grid.Column="2" />
                                 </Grid>
                             </StackLayout>
                         </ViewCell>

@@ -109,6 +109,59 @@ namespace FindIt
                     }
                 }
             }
+
+            RecalcuateDistanceAndReSort(loc);
+        }
+
+        public void RecalcuateDistanceAndReSort(Position loc)
+        {
+            if (Items == null || Items.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var item in Items)
+            {
+                int? shortestDistance = null;
+                foreach (var location in item.Locations)
+                {
+                    var d = Distance(loc, location);
+                    if (!shortestDistance.HasValue || d < shortestDistance)
+                    {
+                        shortestDistance = d;
+                    }
+                }
+                item.Distance = shortestDistance;
+            }
+            
+            var sorted = Items.OrderBy(x => x.Distance).ToList();
+            for (int i = 0; i < sorted.Count(); i++)
+            {
+                var newIndex = Items.IndexOf(sorted[i]);
+                if (newIndex != i)
+                {
+                    Items.Move(newIndex, i);
+                }
+            }
+        }
+
+        private int Distance(Position p1, Position p2)
+        {
+            double earthRadius = 6371000; //meters
+            double dLat = ToRadians(p2.Latitude - p1.Latitude);
+            double dLng = ToRadians(p2.Longitude - p1.Longitude);
+            double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                       Math.Cos(ToRadians(p1.Latitude)) * Math.Cos(ToRadians(p2.Latitude)) *
+                       Math.Sin(dLng / 2) * Math.Sin(dLng / 2);
+            double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            var dist = (int)(earthRadius * c);
+
+            return dist;
+        }
+
+        private double ToRadians(double angle)
+        {
+            return angle * Math.PI / 180;
         }
 
         private async Task<ObservableCollection<ItemListView>> GetItemsAsync(bool syncItems = false)
