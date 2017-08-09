@@ -28,7 +28,8 @@
                 IsShowingUser="true"
                 HasZoomEnabled="true"
                 IsIndoorEnabled="true"
-                VerticalOptions="FillAndExpand" />
+                VerticalOptions="FillAndExpand"
+                SelectedPinChanged="Map_SelectedPinChanged" />
 
             <ActivityIndicator
                        HorizontalOptions="Center"
@@ -45,6 +46,7 @@
                 IsPullToRefreshEnabled="true"
                 IsRefreshing="{Binding IsBusy, Mode=OneWay}"
                 Refreshing="OnListRefresh"
+                ItemSelected="ItemsListView_ItemSelected"
                 CachingStrategy="RecycleElement">
                     
                 <!--ItemSelected="OnItemSelected" -->
@@ -59,8 +61,8 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <Entry Text="{Binding Text}" FontSize="16" Unfocused="OnUpdateText"/>
-                                    <Label Text="{Binding Distance}" FontSize="12" Grid.Column="1" />
+                                    <Entry Text="{Binding Text}" FontSize="16" Unfocused="OnUpdateText" Grid.Column="0"/>
+                                    <Label Text="{Binding Distance}" FontSize="13" Grid.Column="1" Margin="5,15,5,0" />
                                     <Button Text="{Binding ButtonText}"
                                         Clicked="OnDone"
                                         VerticalOptions="CenterAndExpand" Grid.Column="2" />

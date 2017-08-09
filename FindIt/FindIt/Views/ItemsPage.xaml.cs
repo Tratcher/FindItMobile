@@ -10,6 +10,9 @@ namespace FindIt.Views
 {
     public partial class ItemsPage : ContentPage
     {
+        private static BitmapDescriptor StandardPinImage = BitmapDescriptorFactory.DefaultMarker(Color.Red);
+        private static BitmapDescriptor SelectedPinImage = BitmapDescriptorFactory.DefaultMarker(Color.Green);
+
         // Track whether the user has authenticated.
         bool authenticated = false;
         double _heading = 0;
@@ -183,37 +186,42 @@ namespace FindIt.Views
 
                 foreach (var item in manager.Items)
                 {
+                    CreatePins(item);
                     AddPins(item);
                 }
             }
         }
 
-        private void AddPins(ItemListView item)
+        private void CreatePins(ItemListView item)
         {
+            item.Pins.Clear();
+
             foreach (var destination in item.Locations)
             {
                 var pin = new Pin()
                 {
-                    Type = PinType.Place,
+                    Icon = StandardPinImage,
                     Label = item.Text,
                     Position = destination
                 };
+                item.Pins.Add(pin);
+            }
+        }
 
+        private void AddPins(ItemListView item)
+        {
+            foreach (var pin in item.Pins)
+            {
                 map.Pins.Add(pin);
             }
         }
 
         private void RemovePins(ItemListView item)
         {
-            var pinsToRemove = new List<Pin>();
-            foreach (var pin in map.Pins)
+            foreach (var pin in item.Pins)
             {
-                if (string.Equals(pin.Label, item.Text, StringComparison.OrdinalIgnoreCase))
-                {
-                    pinsToRemove.Add(pin);
-                }
+                map.Pins.Remove(pin);
             }
-            pinsToRemove.ForEach(pin => map.Pins.Remove(pin));
         }
 
         public async void OnAdd(object sender, EventArgs e)
@@ -271,6 +279,40 @@ namespace FindIt.Views
                 if (showIndicator)
                 {
                     indicatorDelay.ContinueWith(t => SetIndicatorActivity(false), TaskScheduler.FromCurrentSynchronizationContext());
+                }
+            }
+        }
+
+        private void ItemsListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            foreach (var pin in map.Pins)
+            {
+                pin.Icon = StandardPinImage;
+            }
+
+            var itemViewModel = (ItemListView)e.SelectedItem;
+            if (itemViewModel != null)
+            {
+                foreach (var pin in itemViewModel.Pins)
+                {
+                    pin.Icon = SelectedPinImage;
+                }
+            }
+        }
+
+        private void Map_SelectedPinChanged(object sender, SelectedPinChangedEventArgs e)
+        {
+            if (e.SelectedPin == null)
+            {
+                return;
+            }
+
+            foreach (ItemListView item in ItemsListView.ItemsSource)
+            {
+                if (item.Pins.Contains(e.SelectedPin))
+                {
+                    ItemsListView.SelectedItem = item;
+                    break;
                 }
             }
         }

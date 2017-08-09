@@ -49,5 +49,7 @@ namespace FindIt.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Distance"));
             }
         }
+
+        public IList<Pin> Pins { get; } = new List<Pin>();
     }
 }
