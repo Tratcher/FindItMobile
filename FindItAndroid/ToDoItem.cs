@@ -12,7 +12,19 @@ namespace FindItAndroid
 
 		[JsonProperty(PropertyName = "complete")]
 		public bool Complete { get; set; }
-	}
+
+        [JsonProperty(PropertyName = "latitude")]
+        public double? Latitude { get; set; }
+
+        [JsonProperty(PropertyName = "longitude")]
+        public double? Longitude { get; set; }
+
+        [JsonProperty(PropertyName = "altitude")]
+        public double? Altitude { get; set; }
+
+        [JsonProperty(PropertyName = "accuracy")]
+        public double? Accuracy { get; set; }
+    }
 
 	public class ToDoItemWrapper : Java.Lang.Object
 	{

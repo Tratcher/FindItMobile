@@ -8,14 +8,14 @@
 //#define OFFLINE_SYNC_ENABLED
 
 using System;
-using Android.OS;
+using System.Threading.Tasks;
 using Android.App;
+using Android.Content;
+using Android.Locations;
+using Android.OS;
 using Android.Views;
 using Android.Widget;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Microsoft.WindowsAzure.MobileServices;
-using FindItAndroid;
 
 #if OFFLINE_SYNC_ENABLED
 using Microsoft.WindowsAzure.MobileServices.Sync;
@@ -29,6 +29,8 @@ namespace FindItAndroid
                Theme = "@style/AppTheme")]
     public class ToDoActivity : Activity
     {
+        private LocationManager locMgr;
+
         // Client reference.
         private MobileServiceClient client;
 
@@ -146,7 +148,9 @@ namespace FindItAndroid
         {
             try {
                 // Get the items that weren't marked as completed and add them in the adapter
-                var list = await todoTable.Where(item => item.Complete == false).ToListAsync();
+                var list = await todoTable
+                    .Where(item => item.Complete == false)
+                    .ToListAsync();
 
                 adapter.Clear();
 
@@ -168,16 +172,22 @@ namespace FindItAndroid
             // Set the item as completed and update it in the table
             item.Complete = true;
             try {
+                // Capture found location
+                locMgr = GetSystemService(Context.LocationService) as LocationManager;
+                var loc = locMgr.GetLastKnownLocation(LocationManager.GpsProvider);
+                item.Accuracy = loc.Accuracy;
+                item.Longitude = loc.Longitude;
+                item.Latitude = loc.Latitude;
+                item.Altitude = loc.Altitude;
+
 				// Update the new item in the local store.
                 await todoTable.UpdateAsync(item);
 #if OFFLINE_SYNC_ENABLED
                 // Send changes to the mobile app backend.
 				await SyncAsync();
 #endif
-
                 if (item.Complete)
                     adapter.Remove(item);
-
             }
             catch (Exception e) {
                 CreateAndShowDialog(e, "Error");
