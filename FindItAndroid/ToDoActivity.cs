@@ -79,7 +79,7 @@ namespace FindItAndroid
             listViewToDo.Adapter = adapter;
 
             // Load the items from the mobile app backend.
-            OnRefreshItemsSelected();
+            // OnRefreshItemsSelected();
         }
 
 #if OFFLINE_SYNC_ENABLED
@@ -224,6 +224,41 @@ namespace FindItAndroid
             }
 
             textNewToDo.Text = "";
+        }
+
+        // Define a authenticated user.
+        private MobileServiceUser user;
+        private async Task<bool> Authenticate()
+        {
+            var success = false;
+            try
+            {
+                // Sign in with Google login using a server-managed flow.
+                user = await client.LoginAsync(this, MobileServiceAuthenticationProvider.Google, "finditapi");
+                CreateAndShowDialog(string.Format("you are now logged in - {0}",
+                    user.UserId), "Logged in!");
+
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                CreateAndShowDialog(ex, "Authentication failed");
+            }
+            return success;
+        }
+
+        [Java.Interop.Export()]
+        public async void LoginUser(View view)
+        {
+            // Load data only after authentication succeeds.
+            if (await Authenticate())
+            {
+                //Hide the button after authentication succeeds.
+                FindViewById<Button>(Resource.Id.buttonLoginUser).Visibility = ViewStates.Gone;
+
+                // Load the data.
+                OnRefreshItemsSelected();
+            }
         }
 
         private void CreateAndShowDialog(Exception exception, String title)

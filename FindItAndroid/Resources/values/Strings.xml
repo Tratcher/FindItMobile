@@ -6,4 +6,5 @@
     <string name="mobile_services">Azure App Service</string>
     <string name="menu_refresh">Refresh</string>
     <string name="checkbox_text">Item Text</string>
+    <string name="login_button_text">Sign in</string>
 </resources>
